@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import filters
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (
-    IsAuthenticated, IsAuthenticatedOrReadOnly
+    IsAuthenticated
 )
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
