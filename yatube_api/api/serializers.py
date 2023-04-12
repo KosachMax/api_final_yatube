@@ -33,6 +33,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
+
     user = SlugRelatedField(
         default=CurrentUserDefault(),
         slug_field='username',
@@ -43,6 +44,12 @@ class FollowSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(),
     )
 
+    def validate_following(self, following):
+        user = self.context['request'].user
+        if following == user:
+            raise serializers.ValidationError('Cannot follow yourself')
+        return following
+
     class Meta:
         fields = '__all__'
         model = Follow
@@ -50,16 +57,9 @@ class FollowSerializer(serializers.ModelSerializer):
             UniqueTogetherValidator(
                 queryset=Follow.objects.all(),
                 fields=['user', 'following'],
-                message='Can not follow twice'
+                message='Cannot follow the same user twice'
             )
         ]
-
-    def validate(self, data):
-        user = self.context['request'].user
-        following = data['following']
-        if following == user:
-            raise serializers.ValidationError('Can not follow yourself')
-        return data
 
 
 class GroupSerializer(serializers.ModelSerializer):

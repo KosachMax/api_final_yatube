@@ -1,13 +1,17 @@
 from http import HTTPStatus
 
 from django.shortcuts import get_object_or_404
-from rest_framework import filters
+from rest_framework import filters, mixins
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (
     IsAuthenticated
 )
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import (
+    ModelViewSet,
+    ReadOnlyModelViewSet,
+    GenericViewSet
+)
 
 from api.permissions import IsAuthorOrReadOnly
 from api.serializers import (
@@ -26,7 +30,11 @@ class GroupViewSet(ReadOnlyModelViewSet):
         return Group.objects.all()
 
 
-class FollowViewSet(ModelViewSet):
+class FollowViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    GenericViewSet
+):
     permission_classes = (IsAuthenticated,)
     serializer_class = FollowSerializer
     filter_backends = (filters.SearchFilter,)
